@@ -5,6 +5,8 @@ import { fileURLToPath } from 'url';
 import fs from 'fs/promises';
 import pdfParser from '../services/pdfParser.js';
 import aiAnalyzer from '../services/aiAnalyzer.js';
+import advancedPdfParser from '../services/advancedPdfParser.js';
+import enhancedAiAnalyzer from '../services/enhancedAiAnalyzer.js';
 import reportGenerator from '../services/reportGenerator.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -60,13 +62,15 @@ router.post('/upload', upload.array('files', 5), async (req, res) => {
 
     console.log(`📄 ${uploadedFiles.length}개 파일 업로드 완료`);
 
-    // 1. PDF 파싱
-    console.log('🔍 PDF 텍스트 추출 중...');
-    const parsedData = await pdfParser.parseMultiplePDFs(uploadedFiles);
+    // 1. PDF 파싱 (향상된 구조화 파서 사용)
+    console.log('🔍 PDF 텍스트 추출 및 구조화 중...');
+    const parsedData = await advancedPdfParser.parseMultiplePDFs(uploadedFiles);
+    console.log(`📊 데이터 품질: ${parsedData.summary.dataQuality}`);
+    console.log(`✅ 완전성: 기업정보=${parsedData.structured.completeness.hasCompanyInfo}, 재무=${parsedData.structured.completeness.hasFinancialInfo}, 신용=${parsedData.structured.completeness.hasCreditInfo}`);
 
-    // 2. AI 분석
-    console.log('🤖 AI 분석 시작...');
-    const analysisResult = await aiAnalyzer.analyze(parsedData);
+    // 2. AI 분석 (향상된 프롬프트 사용)
+    console.log('🤖 AI 분석 시작 (구조화된 데이터 기반)...');
+    const analysisResult = await enhancedAiAnalyzer.analyze(parsedData);
 
     // 3. 업로드된 파일 삭제 (보안)
     console.log('🗑️  임시 파일 삭제 중...');
