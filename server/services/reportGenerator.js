@@ -27,8 +27,13 @@ class ReportGenerator {
         doc.on('end', () => resolve(Buffer.concat(chunks)));
         doc.on('error', reject);
 
-        // 한글 폰트 설정 (기본 폰트 사용 - 한글 지원 제한적)
-        // 실제 운영시에는 한글 폰트 파일을 추가해야 함
+        // 한글 폰트 설정 - 나눔바른고딕 사용
+        try {
+          doc.registerFont('NanumBarunGothic', '/usr/share/fonts/truetype/nanum/NanumBarunGothic.ttf');
+          doc.font('NanumBarunGothic');
+        } catch (fontError) {
+          console.warn('한글 폰트 로드 실패, 기본 폰트 사용:', fontError.message);
+        }
 
         // 표지
         this.addCoverPage(doc, reportData);
